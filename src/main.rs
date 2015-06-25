@@ -17,7 +17,8 @@ fn main() {
         .filter(|x| x.len() > 3 && x.len() < 7)
         .collect();
     rand::thread_rng().shuffle(&mut lines);
-    for i in (0..4) {
+    for i in (0..3) {
         print!("{} ", lines[i]);
     }
+    println!("{}", lines[4]);
 }
