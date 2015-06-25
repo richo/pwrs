@@ -3,6 +3,8 @@ name = "pwrs"
 version = "0.1.0"
 authors = ["Richo Healey <richo@psych0tik.net>"]
 license = "MIT"
+repository = "https://github.com/richo/pwrs"
+description = "a pwgen like utility that generates passphrases"
 
 [dependencies]
 
