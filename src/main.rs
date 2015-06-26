@@ -12,6 +12,7 @@ struct Config {
     number: usize,
     count: usize,
     filename: String,
+    downcase: bool,
 }
 
 impl Config {
@@ -22,6 +23,7 @@ impl Config {
             number: 4,
             count: 1,
             filename: DEFAULT_DICT_FILE.to_string(),
+            downcase: true,
         }
     }
 }
@@ -48,12 +50,20 @@ fn main() {
     let cfg = Config::new();
     let words = read_words(&cfg.filename).unwrap();
 
+    let print = |word: &str| {
+        if cfg.downcase {
+            print!("{} ",  word.to_lowercase());
+        } else {
+            print!("{} ", word);
+        }
+    };
+
     for _ in (0..cfg.count) {
         let shuffled = shuffled_words(&words, &cfg);
 
-        for i in (0..(cfg.number-1)) {
-            print!("{} ", shuffled[i]);
+        for i in (0..(cfg.number)) {
+            print(shuffled[i]);
         }
-        println!("{}", shuffled[cfg.number]);
+        println!("");
     }
 }
