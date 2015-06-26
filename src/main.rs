@@ -111,20 +111,14 @@ fn main() {
     };
     let words = read_words(&cfg.filename).unwrap();
 
-    let print = |word: &str| {
-        if cfg.downcase {
-            print!("{} ",  word.to_lowercase());
-        } else {
-            print!("{} ", word);
-        }
-    };
-
     for _ in (0..cfg.count) {
         let shuffled = shuffled_words(&words, &cfg);
 
-        for i in (0..(cfg.number)) {
-            print(shuffled[i]);
+        let out = shuffled[0..cfg.number].connect(" ");
+        if cfg.downcase {
+            println!("{}",  out.to_lowercase());
+        } else {
+            println!("{}", out);
         }
-        println!("");
     }
 }
