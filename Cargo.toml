@@ -9,3 +9,4 @@ description = "a pwgen like utility that generates passphrases"
 [dependencies]
 
 rand = "*"
+getopts = "*"
