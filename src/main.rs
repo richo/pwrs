@@ -1,4 +1,5 @@
 #![cfg_attr(test, feature(test))]
+#![cfg_attr(test, allow(dead_code))]
 #[cfg(test)]
 extern crate test;
 
@@ -132,7 +133,6 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use test::Bencher;
 
     #[bench]
