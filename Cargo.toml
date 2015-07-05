@@ -1,6 +1,6 @@
 [package]
 name = "pwrs"
-version = "1.0.1"
+version = "1.0.2"
 authors = ["Richo Healey <richo@psych0tik.net>"]
 license = "MIT"
 repository = "https://github.com/richo/pwrs"
