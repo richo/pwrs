@@ -7,7 +7,6 @@ extern crate getopts;
 
 use std::io::{self, Read};
 use std::fs::File;
-use rand::Rng;
 use getopts::Options;
 
 const DEFAULT_DICT_FILE: &'static str = "/usr/share/dict/words";
@@ -34,22 +33,22 @@ impl Config {
     }
 }
 
-fn read_words(filename: &String) -> io::Result<String> {
-    let mut dict = File::open(filename).unwrap();
+fn read_wordlist(cfg: &Config) -> io::Result<String> {
+    let mut dict = File::open(&cfg.filename).unwrap();
     let mut buf = String::new();
     try!(dict.read_to_string(&mut buf));
     Ok(buf)
 }
 
-fn shuffled_words<'a>(source: &'a String, cfg: &Config) -> Vec<&'a str> {
-    // Not ideal, but whatever.
+fn split_wordlist<'a>(buf: &'a String, cfg: &Config) -> Vec<&'a str> {
+    buf.lines()
+       .filter(|x| x.len() >= cfg.min && x.len() <= cfg.max)
+       .collect()
+}
 
-    let mut lines: Vec<_> = source
-        .lines()
-        .filter(|x| x.len() >= cfg.min && x.len() <= cfg.max)
-        .collect();
-    rand::thread_rng().shuffle(&mut lines);
-    lines
+fn select_words<'a>(words: &'a Vec<&'a str>, cfg: &Config) -> Vec<&'a &'a str> {
+    let mut rng = rand::thread_rng();
+    rand::sample(&mut rng, words.iter(), cfg.number)
 }
 
 fn usage(opts: &Options, err: Option<String>) {
@@ -113,12 +112,16 @@ fn main() {
         Some(c) => c,
         None => return,
     };
-    let words = read_words(&cfg.filename).unwrap();
+    let wordlist = read_wordlist(&cfg).unwrap();
+    let words = split_wordlist(&wordlist, &cfg);
 
     for _ in (0..cfg.count) {
-        let shuffled = shuffled_words(&words, &cfg);
+        let selected = select_words(&words, &cfg);
 
-        let out = shuffled[0..cfg.number].connect(" ");
+        let inter: Vec<&str> = selected.iter()
+                                       .map(|x| **x)
+                                       .collect();
+        let out = inter.connect(" ");
         if cfg.downcase {
             println!("{}",  out.to_lowercase());
         } else {
@@ -135,9 +138,10 @@ mod tests {
     #[bench]
     fn with_defaults(b: &mut Bencher) {
         let cfg = ::Config::new();
-        let words = ::read_words(&cfg.filename).unwrap();
+        let buf = ::read_wordlist(&cfg).unwrap();
+        let words = ::split_wordlist(&buf, &cfg);
         b.iter(|| {
-            let _ = ::shuffled_words(&words, &cfg);
+            let _ = ::select_words(&words, &cfg);
         })
     }
 }
