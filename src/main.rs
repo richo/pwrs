@@ -1,3 +1,7 @@
+#![cfg_attr(test, feature(test))]
+#[cfg(test)]
+extern crate test;
+
 extern crate rand;
 extern crate getopts;
 
@@ -120,5 +124,20 @@ fn main() {
         } else {
             println!("{}", out);
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use test::Bencher;
+
+    #[bench]
+    fn with_defaults(b: &mut Bencher) {
+        let cfg = ::Config::new();
+        let words = ::read_words(&cfg.filename).unwrap();
+        b.iter(|| {
+            let _ = ::shuffled_words(&words, &cfg);
+        })
     }
 }
