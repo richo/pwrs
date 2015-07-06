@@ -36,7 +36,7 @@ impl Config {
 }
 
 fn read_wordlist(cfg: &Config) -> io::Result<String> {
-    let mut dict = File::open(&cfg.filename).unwrap();
+    let mut dict = try!(File::open(&cfg.filename));
     let mut buf = String::new();
     try!(dict.read_to_string(&mut buf));
     Ok(buf)
@@ -118,7 +118,15 @@ fn main() {
         Some(c) => c,
         None => return,
     };
-    let wordlist = read_wordlist(&cfg).unwrap();
+
+    let wordlist = match read_wordlist(&cfg) {
+        Ok(words) => words,
+        Err(e) => {
+            println!("Couldn't open wordlist file: {}", e.to_string());
+            return;
+        }
+    };
+
     let words = split_wordlist(&wordlist, &cfg);
 
     for _ in (0..cfg.count) {
