@@ -6,6 +6,7 @@ extern crate test;
 extern crate rand;
 extern crate getopts;
 
+use std::env;
 use std::io::{self, Read};
 use std::fs::File;
 use getopts::Options;
@@ -76,7 +77,7 @@ fn config() -> Option<Config> {
         Err(f) => {
             usage(&opts, Some(f.to_string()));
             // This is only in nightlies and for once I'm writing a thing that works on stable rust
-            // ::std::env::set_exit_status(1);
+            // env::set_exit_status(1);
             return None;
         }
     };
@@ -104,6 +105,10 @@ fn config() -> Option<Config> {
     unpack_opt!(max);
     unpack_opt!(count);
     unpack_opt!(number);
+
+    if let Ok(path) = env::var("PWRS_WORDLIST") {
+        cfg.filename = path;
+    }
 
     Some(cfg)
 }
