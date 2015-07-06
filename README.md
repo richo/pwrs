@@ -13,3 +13,8 @@ A pwgen'esque utility that generates passphrases instead of passwords.
         -n --number NUMBER  Number of words to include in passphrases
 
 Optionally, you can export `PWRS_WORDLIST`, by default it will use `/usr/share/dict/words`.
+
+## Installing
+
+    cargo build --release
+    cp target/release/pwrs /usr/local/bin
