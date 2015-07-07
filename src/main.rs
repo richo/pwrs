@@ -76,9 +76,7 @@ fn config() -> Option<Config> {
         Ok(m) => m,
         Err(f) => {
             usage(&opts, Some(f.to_string()));
-            // This is only in nightlies and for once I'm writing a thing that works on stable rust
-            // env::set_exit_status(1);
-            return None;
+            std::process::exit(1);
         }
     };
 
