@@ -19,7 +19,7 @@ struct Config {
     number: usize,
     count: usize,
     filename: String,
-    downcase: bool,
+    upcase: bool,
 }
 
 impl Config {
@@ -30,7 +30,7 @@ impl Config {
             number: 4,
             count: 1,
             filename: DEFAULT_DICT_FILE.to_string(),
-            downcase: true,
+            upcase: false,
         }
     }
 }
@@ -71,6 +71,7 @@ fn config() -> Option<Config> {
     opts.optopt("M", "max", "Maximum number of characters in words", "MAX");
     opts.optopt("c", "count", "Count of passphrases to print", "COUNT");
     opts.optopt("n", "number", "Number of words to include in passphrases", "NUMBER");
+    opts.optflag("u", "upcase", "Allow words to be capitolized");
 
     let matches = match opts.parse(&args[1..]) {
         Ok(m) => m,
@@ -108,6 +109,10 @@ fn config() -> Option<Config> {
         cfg.filename = path;
     }
 
+    if matches.opt_present("upcase") {
+        cfg.upcase = true;
+    }
+
     Some(cfg)
 }
 
@@ -134,10 +139,10 @@ fn main() {
                                        .map(|x| **x)
                                        .collect();
         let out = inter.connect(" ");
-        if cfg.downcase {
-            println!("{}",  out.to_lowercase());
-        } else {
+        if cfg.upcase {
             println!("{}", out);
+        } else {
+            println!("{}",  out.to_lowercase());
         }
     }
 }
