@@ -1,14 +1,9 @@
-#![cfg_attr(test, feature(test))]
-#![cfg_attr(test, allow(dead_code))]
-#[cfg(test)]
-extern crate test;
-
-extern crate rand;
-extern crate getopts;
-
 use std::env;
 use std::io::{self, Read};
 use std::fs::File;
+
+use rand;
+use rand::seq::SliceRandom;
 use getopts::Options;
 
 const DEFAULT_DICT_FILE: &'static str = "/usr/share/dict/words";
@@ -36,9 +31,9 @@ impl Config {
 }
 
 fn read_wordlist(cfg: &Config) -> io::Result<String> {
-    let mut dict = try!(File::open(&cfg.filename));
+    let mut dict = File::open(&cfg.filename)?;
     let mut buf = String::new();
-    try!(dict.read_to_string(&mut buf));
+    dict.read_to_string(&mut buf)?;
     Ok(buf)
 }
 
@@ -50,7 +45,7 @@ fn split_wordlist<'a>(buf: &'a String, cfg: &Config) -> Vec<&'a str> {
 
 fn select_words<'a>(words: &'a Vec<&'a str>, cfg: &Config) -> Vec<&'a &'a str> {
     let mut rng = rand::thread_rng();
-    rand::sample(&mut rng, words.iter(), cfg.number)
+    words.choose_multiple(&mut rng, cfg.number).collect()
 }
 
 fn usage(opts: &Options, err: Option<String>) {
@@ -132,13 +127,13 @@ fn main() {
 
     let words = split_wordlist(&wordlist, &cfg);
 
-    for _ in (0..cfg.count) {
+    for _ in 0..cfg.count {
         let selected = select_words(&words, &cfg);
 
         let inter: Vec<&str> = selected.iter()
                                        .map(|x| **x)
                                        .collect();
-        let out = inter.connect(" ");
+        let out = inter.join(" ");
         if cfg.upcase {
             println!("{}", out);
         } else {
@@ -149,15 +144,13 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-    use test::Bencher;
+    use super::*;
 
-    #[bench]
-    fn with_defaults(b: &mut Bencher) {
-        let cfg = ::Config::new();
-        let buf = ::read_wordlist(&cfg).unwrap();
-        let words = ::split_wordlist(&buf, &cfg);
-        b.iter(|| {
-            let _ = ::select_words(&words, &cfg);
-        })
+    #[test]
+    fn with_defaults() {
+        let cfg = Config::new();
+        let buf = read_wordlist(&cfg).unwrap();
+        let words = split_wordlist(&buf, &cfg);
+        let _ = select_words(&words, &cfg);
     }
 }

@@ -1,6 +1,7 @@
 [package]
 name = "pwrs"
 version = "1.1.0"
+edition = "2018"
 authors = ["Richo Healey <richo@psych0tik.net>"]
 license = "MIT"
 repository = "https://github.com/richo/pwrs"
@@ -8,5 +9,5 @@ description = "a pwgen like utility that generates passphrases"
 
 [dependencies]
 
-rand = "*"
-getopts = "*"
+rand = "0.7.0"
+getopts = "0.2.19"
