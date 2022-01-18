@@ -9,5 +9,5 @@ description = "a pwgen like utility that generates passphrases"
 
 [dependencies]
 
-rand = "0.7.0"
-getopts = "0.2.19"
+rand = "0.8.4"
+getopts = "0.2.21"
