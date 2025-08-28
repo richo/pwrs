@@ -3,7 +3,7 @@ use std::io::{self, Read};
 use std::fs::File;
 
 use rand;
-use rand::seq::SliceRandom;
+use rand::seq::IndexedRandom;
 use getopts::Options;
 
 const DEFAULT_DICT_FILE: &'static str = "/usr/share/dict/words";
@@ -44,7 +44,7 @@ fn split_wordlist<'a>(buf: &'a String, cfg: &Config) -> Vec<&'a str> {
 }
 
 fn select_words<'a>(words: &'a Vec<&'a str>, cfg: &Config) -> Vec<&'a &'a str> {
-    let mut rng = rand::thread_rng();
+    let mut rng = rand::rng();
     words.choose_multiple(&mut rng, cfg.number).collect()
 }
 
